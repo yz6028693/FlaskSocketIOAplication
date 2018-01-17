@@ -20,9 +20,11 @@ Demos shows below:
 <a><img src="Gifs&Images/demo1.gif" width = 90% position = 'ralative'></a>
 
 
+
 2. What the application looks like:
 
 <a><img src="Gifs&Images/demo2.gif" width = 90% position = 'ralative'></a>
+
 
 
 3. When two clients run this application at same time: (different clients will not affect each other)
