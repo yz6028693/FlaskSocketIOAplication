@@ -6,11 +6,7 @@ This is a real time data streaming application and can be separated into 3 parts
 
 Python 3.5 is used in this demo
 
-Python packages needed:
-  flask,
-  flask_socketio,
-  eventlet,
-  & numpy
+Python packages needed: 1. flask, 2. flask_socketio, 3. eventlet, 4. numpy
 
 Steps:
 1. Clone or download whole repository (make sure the templates and static folders and the __init__.py file are in same folder)
