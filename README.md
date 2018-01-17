@@ -14,4 +14,5 @@ Python packages needed:
 
 Steps:
 1. Clone or download whole repository (make sure the templates and static folders and the __init__.py file are in same folder)
-2. run the __init__.py file
+2. Run the __init__.py file
+3. The application can be accessed at http://localhost:8000/
