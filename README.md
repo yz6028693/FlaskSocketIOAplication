@@ -16,3 +16,19 @@ Steps:
 1. Clone or download whole repository (make sure the templates and static folders and the __init__.py file are in same folder)
 2. Run the __init__.py file
 3. The application can be accessed at http://localhost:8000/
+
+Demos shows below:
+
+1. Run the '__init__.py' file:
+
+<a><img src="Gifs&Images/demo1.gif" width = 90% position = 'ralative'></a>
+
+
+2. What the application looks like:
+
+<a><img src="Gifs&Images/demo2.gif" width = 90% position = 'ralative'></a>
+
+
+3. When two clients run at same time: (different clients will not affect each other)
+
+<a><img src="Gifs&Images/demo3.gif" width = 90% position = 'ralative'></a>
