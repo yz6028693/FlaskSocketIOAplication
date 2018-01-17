@@ -1,0 +1,292 @@
+
+<!DOCTYPE html lang="en">
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Demo1, Machine Learning + Flask + Bokeh</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+	<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-0.12.5.min.js"></script>
+	<script type="text/javascript" src="https://cdn.pydata.org/bokeh/release/bokeh-api-0.12.5.min.js"></script>
+	<!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+	<link rel="shortcut icon" href="favicon.ico">
+	<!-- Google Webfonts -->
+	<link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,500' rel='stylesheet' type='text/css'>
+	<link href='http://fonts.googleapis.com/css?family=Roboto+Slab:400,300,100,500' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="static/css/bokeh.css" type="text/css" />
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="static/css/animate.css">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="static/css/icomoon.css">
+	<!-- Simple Line Icons -->
+	<link rel="stylesheet" href="static/css/simple-line-icons.css">
+	<!-- Theme Style -->
+	<link rel="stylesheet" href="static/css/style.css">
+	<!-- Modernizr JS -->
+	<script src="static/js/modernizr-2.6.2.min.js"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="js/respond.min.js"></script>
+	<![endif]-->
+
+	</head>
+	<body>
+		
+	<header id="fh5co-header" role="banner">
+		<nav class="navbar navbar-default" role="navigation">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-10 col-md-offset-1">
+						<div class="navbar-header"> 
+						<!-- Mobile Toggle Menu Button -->
+						<a href="#" class="js-fh5co-nav-toggle fh5co-nav-toggle visible-xs-block" data-toggle="collapse" data-target="#fh5co-navbar" aria-expanded="false" aria-controls="navbar"><i></i></a>
+						<a class="navbar-brand" href="index.html">Demo 1</a>
+						</div>
+						<div id="fh5co-navbar" class="navbar-collapse collapse">
+							<ul class="nav navbar-nav navbar-right">
+								<li class="active"><a href="index.html"><span>Home <span class="border"></span></span></a></li>
+								<li><a href="https://github.com/yz6028693/Evolution_Strategy_with_Archimedean_Spiral" target="_blank"><span>GitHub<span class="border"></span></span></a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+	</header>
+	<!-- END .header -->
+	
+	
+	<div id="fh5co-main">
+		<div class="fh5co-intro text-center">
+			<div class="container">
+				<div class="row">
+					<div class="col-md-8 col-md-offset-2">
+						<h2 class="intro-lead">Evolution Strategy + Flask + Bokeh</h1>
+						<h3 class="">(With the idea from OpenAI's <a href="https://blog.openai.com/evolution-strategies/" target="_blank">Blog</a>)</h3>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div id="fh5co-portfolio">
+			<div class="fh5co-portfolio-item ">
+				<div class="fh5co-portfolio-figure animate-box">
+					<script type="text/javascript">
+						socket = io.connect('http://' + document.domain + ':' + location.port);
+						nsp = io.connect('http://' + document.domain + ':' + location.port + '/trigger');
+						nameSpace = Math.floor(Math.random() * 1000000) + 1;
+						
+						socket.on('connect', function() {
+							// we emit a connected message to let the client know that we are connected.
+							socket.emit('client_connected', {namespace: nameSpace});
+							});
+						
+						socket.on('CenterData', function (data) {
+								UpdateCenterData(data['X'], data['Y'], data['Color'], data['Legend']);
+							});
+						
+						socket.on('KidsData', function (data) {
+							UpdateKidsData(data['X'], data['Y'], data['Color'], data['Refresh']);
+							});
+						
+						
+						socket.on('FinishedData', function (data) {
+							UpdateFinishedData(data['X'], data['Y']);
+							});
+						
+						socket.on('Init', function (data) {
+							ArchimedeanSpiralsource.data.x = data['X'];
+							ArchimedeanSpiralsource.data.y = data['Y'];
+							ArchimedeanSpiralsource.trigger('change');
+							});
+						
+						
+						socket.on('RandomPoints', function (data) {
+							RandomPointssource.data.x = data['X'];
+							RandomPointssource.data.y = data['Y'];
+							FinishedDatasource.data.x = [];
+							FinishedDatasource.data.y = [];
+							FinishedDatasource.trigger('change');
+							RandomPointssource.trigger('change')
+							
+							});
+						
+						Speeds = [];
+						function create_figure_button() {
+							if(Kidssource[0].data.x.length !== 0){
+								nsp.emit('trigger', {namespace: nameSpace});
+							}
+						
+							ExplorersNums = Number(document.getElementById('ExplorersNum').value);
+							Speed = Number(document.getElementById('Speed').value);
+							Speeds.push(Speed)
+							if (Speeds.length > 1){
+							setTimeout(function(){
+								socket.emit('create_figure_button', {ExplorersNum: ExplorersNums, UpdateSpeed: Speed, namespace: nameSpace});
+							},(Speeds[Speeds.length - 2] * 1000) + 20);
+							}
+							else{
+								socket.emit('create_figure_button', {ExplorersNum: ExplorersNums, UpdateSpeed: Speed, namespace: nameSpace})
+							}
+							if (Kidssource.length < ExplorersNums){
+								difference = ExplorersNums-Kidssource.length;
+								KidLen = Kidssource.length
+								for (i = 0; i < (difference); i++) {
+									Kidssource.push(new Bokeh.ColumnDataSource({
+									data: { x: [], y: [], colors: []}
+									}));
+									KidsData.push(plot.circle({ field: "x" }, { field: "y" }, {source: Kidssource[i+KidLen], size:12, color: {field: "colors"}, fill_alpha:0.8}));
+								}
+							}
+							else if(Kidssource.length > ExplorersNums){
+								difference = Kidssource.length - ExplorersNums;
+								for (i = 0; i < (difference); i++) {
+								Kidssource[i + ExplorersNums].data.x = [];
+								Kidssource[i + ExplorersNums].data.y = [];
+								Kidssource[i + ExplorersNums].data.colors = [];
+								Kidssource[i + ExplorersNums].trigger('change');
+							}
+							}
+							CenterData = plot.circle({ field: "x" }, { field: "y" }, {source: Centersource, size:12, color: {field: "colors"}, line_color:"white", line_width:1.5, legend:{field: "legend"}});
+							FinishedData = plot.circle({ field: "x" }, { field: "y" }, {source: FinishedDatasource, size:12, color:"red"});
+							RandomPoints = plot.circle({ field: "x" }, { field: "y" }, {source: RandomPointssource, color: "blue", size:8, line_color:"white"});
+						}
+						
+						
+						Kidssource = [];
+						// arrays to hold data
+						for (i = 0; i < 4; i++) {
+							Kidssource.push(new Bokeh.ColumnDataSource({
+							data: { x: [], y: [], colors: []}
+							}));
+						}
+						
+						Centersource = new Bokeh.ColumnDataSource({
+						  data: { x: [], y: [], colors: [], legend: []}
+						});
+						
+						var ArchimedeanSpiralsource = new Bokeh.ColumnDataSource({
+						  data: { x: [], y: []}
+						});
+						
+						RandomPointssource = new Bokeh.ColumnDataSource({
+						  data: { x: [], y: []}
+						});
+						
+						FinishedDatasource = new Bokeh.ColumnDataSource({
+						  data: { x: [], y: []}
+						});
+						
+						
+						// make the plot and add some tools
+						var tools = "pan,crosshair,wheel_zoom,box_zoom,reset,save";
+						
+						plot = Bokeh.Plotting.figure({tools: tools, height: 600, width: 600, x_range:Bokeh.Range1d(-6, 6), y_range:Bokeh.Range1d(-6, 6)});
+						plot.background_fill_color = "#232323";
+						plot.background_fill_alpha = 0.8;
+						plot.ygrid.grid_line_alpha = 0;
+						plot.xgrid.grid_line_alpha = 0;
+						
+						var ArchimedeanSpiral = plot.line({ field: "x" }, { field: "y" }, {source: ArchimedeanSpiralsource, color:"white", line_dash:[4, 4], line_width:2});
+						KidsData = [];
+						for (i = 0; i < 4; i++) {
+							KidsData.push(plot.circle({ field: "x" }, { field: "y" }, {source: Kidssource[i], size:12, color: {field: "colors"}, fill_alpha:0.8}));
+						}
+						
+						Bokeh.Plotting.show(plot,document.currentScript.parentElement);
+						
+						function UpdateKidsData(X, Y, Color, i) {
+						//   alert(Refresh);
+						//   alert(typeof(Refresh));
+						  Kidssource[i].data.x = X;
+						  Kidssource[i].data.y = Y;
+						  Kidssource[i].data.colors = Color;
+						  Kidssource[i].trigger('change');
+						  // Also, the DataSource object must be notified when it has changed.
+						}
+						
+						
+						function UpdateCenterData(X, Y, Color, Legend) {
+						  Centersource.data.x = X;
+						  Centersource.data.y = Y;
+						  Centersource.data.colors = Color;
+						  Centersource.data.legend = Legend;
+						  // Also, the DataSource object must be notified when it has changed.
+						  Centersource.trigger('change');
+						}
+						
+						function UpdateFinishedData(X, Y) {
+						  FinishedDatasource.data.x = X;
+						  FinishedDatasource.data.y = Y;
+						  // Also, the DataSource object must be notified when it has changed.
+						  FinishedDatasource.trigger('change');
+						}
+						
+						</script>
+					<div style="left: 3%;position:  relative;">
+						<div style="width: 50%;display: inline-block;">
+						<h5>Number of explorers:<input id="ExplorersNum" value=4 list="defaultVals" style="text-align:right;position: absolute;right: 370px;", size="9"></h5>
+						<h5>Update Speed (Second):<input id="Speed" value=0.08 style="text-align:right;position: absolute;right: 370px", size="9"></h5>
+						<datalist id = "defaultVals">
+							<option value=1>
+							<option value=2>
+							<option value=3>
+							<option value=4>
+							<option value=5>
+							<option value=6>
+							<option value=7>
+							<option value=8>
+						</datalist>
+						</div>
+						<div style="left: 15%;width: 25%;position:  relative;display: inline-block;">
+						<!-- <h5>Update Speed (Second):<input id="Speed" value=0.08 style="text-align:right;", size="5"></h5> -->
+						<button onclick="create_figure_button()">Create Figure</button>
+						</div>
+					</div>
+					</div>
+
+				<div class="fh5co-portfolio-description">
+					<h2>Demo 1</h2>
+					This application is right now local hosted and can be separated into 3 parts:
+					<ol>
+						
+						<li>Flask and its web socket (SocketIO) handle the server part and the hand shake between frontend and backend.</li>
+						<li>Bokeh (a python package of PyData stack) to build the interactive frontend application.</li>
+						<li>Evolution Strategy algorithm for the functional part.</li>
+					</ol> 
+					<p><a href="https://github.com/yz6028693/Evolution_Strategy_with_Archimedean_Spiral" class="btn btn-primary" target="_blank">Learn more</a></p>
+				</div>
+			</div>
+		</div>
+
+		
+	<footer id="fh5co-footer">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<p>Author: Zhen Yuan</p>
+					<p>Please <a href="mailto:zyuan6028693@gmail.com">email</a> me if you have any questions</p>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+
+	<!-- jQuery -->
+	<script src="static/js/jquery.min.js"></script>
+	<!-- jQuery Easing -->
+	<script src="static/js/jquery.easing.1.3.js"></script>
+	<!-- Bootstrap -->
+	<script src="static/js/bootstrap.min.js"></script>
+	<!-- Waypoints -->
+	<script src="static/js/jquery.waypoints.min.js"></script>
+	<!-- Main JS -->
+	<script src="static/js/main.js"></script>
+
+	
+	</body>
+</html>
