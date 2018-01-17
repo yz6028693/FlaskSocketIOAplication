@@ -2,7 +2,7 @@ This is a real time data streaming application and can be separated into 3 parts
 
 1. Flask and its web socket module (SocketIO) handle the server part and the hand shake between frontend and backend.
 2. Bokeh (a python package of PyData stack) to build the interactive frontend application.
-3. Evolution Strategy algorithm for the functional part.
+3. Evolution Strategy algorithm for the functional part. (for more about the Evolution Strategy algorithm, please check my <a href="https://github.com/yz6028693/Evolution_Strategy_with_Archimedean_Spiral" target="_blank"><span>another repository<span class="border"></span></span></a>)
 
 Python 3.5 is used in this demo
 
@@ -29,6 +29,6 @@ Demos shows below:
 <a><img src="Gifs&Images/demo2.gif" width = 90% position = 'ralative'></a>
 
 
-3. When two clients run at same time: (different clients will not affect each other)
+3. When two clients run this application at same time: (different clients will not affect each other)
 
 <a><img src="Gifs&Images/demo3.gif" width = 90% position = 'ralative'></a>
